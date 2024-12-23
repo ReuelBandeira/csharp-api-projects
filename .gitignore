@@ -1,0 +1,15 @@
+# configs
+/.docker
+/.vscode/**
+!/.vscode/extensions.json
+
+# node
+/node_modules
+**/out
+
+# dotnet
+**/bin
+**/obj
+
+# general
+.env

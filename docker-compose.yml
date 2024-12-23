@@ -1,0 +1,13 @@
+services:
+    mysql:
+        image: mysql:8.0@sha256:d58ac93387f644e4e040c636b8f50494e78e5afc27ca0a87348b2f577da2b7ff
+        container_name: mysql-service
+        ports:
+            - 3306:3306
+        volumes:
+            - .docker/mysql:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+            - MYSQL_PASSWORD=$MYSQL_PASSWORD
+            - MYSQL_USER=$MYSQL_USERNAME
+            - MYSQL_DATABASE=$MYSQL_DATABASE
