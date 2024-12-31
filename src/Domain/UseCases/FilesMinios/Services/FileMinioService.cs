@@ -121,16 +121,11 @@ public class FileMinioService : IFileMinioService
             // Log para garantir que estamos chegando até aqui
             Console.WriteLine($"Preparing to upload file {fileName}");
 
+            // Calcular o tamanho do arquivo a partir do Stream
+            var fileSize = (ulong)dto.Stream.Length;
+
             // Faz upload do arquivo
-            if (dto.FileSize.HasValue)
-            {
-                await _repository.UploadFileAsync(bucketName, fileName, dto.FileType, (ulong)dto.FileSize.Value, dto.Stream);
-            }
-            else
-            {
-                // Permitir o upload sem o tamanho
-                await _repository.UploadFileAsync(bucketName, fileName, dto.FileType, 0, dto.Stream);
-            }
+            await _repository.UploadFileAsync(bucketName, fileName, dto.FileType, fileSize, dto.Stream);
 
             Console.WriteLine($"File {fileName} uploaded successfully.");
 
@@ -140,7 +135,7 @@ public class FileMinioService : IFileMinioService
                 BucketName = bucketName,
                 FileName = fileName,
                 FileType = dto.FileType,
-                FileSize = (ulong)dto.FileSize.GetValueOrDefault()
+                FileSize = fileSize
             };
 
             await _repository.AddAsync(fileMinio);
@@ -150,12 +145,12 @@ public class FileMinioService : IFileMinioService
         catch (Exception ex)
         {
             // Log detalhado para capturar exceção
-
             Console.WriteLine($"Error uploading file: {ex.Message}");
             Console.WriteLine($"Stack Trace: {ex.StackTrace}");
             throw; // Re-throw the exception to handle it upstream
         }
     }
+
 
 
 
