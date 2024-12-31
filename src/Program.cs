@@ -66,14 +66,22 @@ builder.Services.AddScoped<PaginationParams>();
 builder.Services.AddScoped<PaginationHeaderFilter>();
 
 // Configuração do MinIO
+// Configurar o MinioClient usando as variáveis do appsettings.json
 builder.Services.AddSingleton<MinioClient>(provider =>
 {
-    var endpoint = builder.Configuration["MinIOConnection:Endpoint"];
-    var accessKey = builder.Configuration["MinIOConnection:AccessKey"];
-    var secretKey = builder.Configuration["MinIOConnection:SecretKey"];
-    var useSSL = builder.Configuration.GetValue<bool>("MinIOConnection:UseSSL");
+    var configuration = builder.Configuration;
+    var endpoint = configuration["MinIOConnection:Endpoint"];
+    var accessKey = configuration["MinIOConnection:AccessKey"];
+    var secretKey = configuration["MinIOConnection:SecretKey"];
+    var useSSL = configuration.GetValue<bool>("MinIOConnection:UseSSL");
 
-    // Criação do MinioClient com configuração correta
+    // Verificar se as configurações estão presentes
+    if (string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(accessKey) || string.IsNullOrEmpty(secretKey))
+    {
+        throw new ArgumentNullException("MinIO connection parameters cannot be null or empty.");
+    }
+
+    // Criar e configurar o MinioClient
     var minioClient = new MinioClient()
         .WithEndpoint(endpoint)
         .WithCredentials(accessKey, secretKey)

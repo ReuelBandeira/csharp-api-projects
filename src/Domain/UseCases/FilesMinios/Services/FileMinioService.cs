@@ -161,69 +161,7 @@ public class FileMinioService : IFileMinioService
 
 
 
-    // public async Task<string> UploadFileAsync(UploadFileDto dto)
-    // {
-    //     const string bucketName = "example-bucket";
 
-    //     // Garante que o nome do arquivo seja único
-    //     var fileName = dto.FileName.ToLower();
-    //     var existingFile = await _repository.GetFileByFileNameAsync(fileName);
-    //     if (existingFile is not null)
-    //     {
-    //         var ext = Path.GetExtension(existingFile.FileName);
-    //         var baseName = Path.GetFileNameWithoutExtension(existingFile.FileName);
-    //         var copy = 1;
-
-    //         do
-    //         {
-    //             fileName = $"{baseName}({copy++}){ext}";
-    //         }
-    //         while (await _repository.GetFileByFileNameAsync(fileName) is not null);
-    //     }
-
-    //     // Verifica e cria o bucket se necessário
-    //     try
-    //     {
-    //         var bucketExists = await IMinioClient.BucketExistsAsync(bucketName);
-    //         if (!bucketExists)
-    //         {
-    //             await _minioClient.MakeBucketAsync(bucketName);
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         // Tratamento de erro ao verificar/criar bucket
-    //         throw new Exception($"Error checking or creating bucket: {ex.Message}");
-    //     }
-
-    //     // Verifica se o tamanho do arquivo foi fornecido
-    //     if (dto.FileSize.HasValue)
-    //     {
-    //         if (dto.FileSize.Value == 0)
-    //         {
-    //             throw new ArgumentException("FileSize cannot be zero", nameof(dto.FileSize));
-    //         }
-
-    //         await _repository.UploadFileAsync(bucketName, fileName, dto.FileType, (ulong)dto.FileSize.Value, dto.Stream);
-    //     }
-    //     else
-    //     {
-    //         throw new ArgumentException("FileSize cannot be null", nameof(dto.FileSize));
-    //     }
-
-    //     // Cria o registro no banco de dados
-    //     var fileMinio = new FileMinio
-    //     {
-    //         BucketName = bucketName,
-    //         FileName = fileName,
-    //         FileType = dto.FileType,
-    //         FileSize = (ulong)dto.FileSize.Value
-    //     };
-
-    //     await _repository.AddAsync(fileMinio);
-
-    //     return fileName;
-    // }
 
 
 

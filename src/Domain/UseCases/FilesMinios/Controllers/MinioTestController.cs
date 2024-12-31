@@ -1,30 +1,34 @@
-using Api.Domain.UseCases.FilesMinios.Services.Interfaces;
+
 using Minio;
 
-namespace Api.Domain.UseCases.FilesMinios.Services
+namespace Api.Controllers
 {
-    public class MinioTestService : IMinioTestService
+    [ApiController]
+    [Route("api/[controller]")]
+    public class MinioTestController : ControllerBase
     {
         private readonly MinioClient _minioClient;
 
-        public MinioTestService(MinioClient minioClient)
+        public MinioTestController(MinioClient minioClient)
         {
             _minioClient = minioClient;
         }
 
+        [HttpGet("test-connection")]
         public async Task<IActionResult> TestConnectionAsync()
         {
             try
             {
-                // Teste de conexão
+                // Teste a conexão
                 var result = await _minioClient.ListBucketsAsync();
 
-                // Verifique se a conexão foi bem-sucedida
+                // Verifique se a resposta não é nula
                 if (result?.Buckets == null || !result.Buckets.Any())
                 {
                     return BadRequest(new { Message = "No buckets found" });
                 }
 
+                // Retorna o sucesso, com os nomes dos buckets
                 return Ok(new { Message = "MinIO connection successful!", Buckets = result.Buckets.Select(b => b.Name) });
             }
             catch (Exception ex)
@@ -33,20 +37,7 @@ namespace Api.Domain.UseCases.FilesMinios.Services
                 return BadRequest(new { Message = "Error connecting to MinIO", Details = ex.Message });
             }
         }
-
-        private IActionResult Ok(object value)
-        {
-            throw new NotImplementedException();
-        }
-
-        private IActionResult BadRequest(object value)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<bool> IMinioTestService.TestConnectionAsync()
-        {
-            throw new NotImplementedException();
-        }
     }
+
+
 }
