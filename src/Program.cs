@@ -65,8 +65,7 @@ builder.Services.AddScoped<IMinioTestService, MinioTestService>();
 builder.Services.AddScoped<PaginationParams>();
 builder.Services.AddScoped<PaginationHeaderFilter>();
 
-// Configuração do MinIO
-// Configurar o MinioClient usando as variáveis do appsettings.json
+// Configuração do MinIO (reparado)
 builder.Services.AddSingleton<MinioClient>(provider =>
 {
     var configuration = builder.Configuration;
@@ -75,21 +74,18 @@ builder.Services.AddSingleton<MinioClient>(provider =>
     var secretKey = configuration["MinIOConnection:SecretKey"];
     var useSSL = configuration.GetValue<bool>("MinIOConnection:UseSSL");
 
-    // Verificar se as configurações estão presentes
+
+    // Verificar se os parâmetros obrigatórios estão presentes
     if (string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(accessKey) || string.IsNullOrEmpty(secretKey))
     {
         throw new ArgumentNullException("MinIO connection parameters cannot be null or empty.");
     }
 
-    // Criar e configurar o MinioClient
-    var minioClient = new MinioClient()
-        .WithEndpoint(endpoint)
-        .WithCredentials(accessKey, secretKey)
-        .WithSSL(useSSL);
+    // Criando e retornando o MinioClient com os parâmetros necessários
+    var minioClient = new MinioClient(endpoint, accessKey, secretKey);
 
-    return (MinioClient)minioClient;
+    return minioClient;
 });
-
 
 builder.Services.AddControllers();
 
@@ -105,6 +101,10 @@ builder.Services.AddSwaggerGen(options =>
         Version = swaggerConfig["Version"]
     });
 });
+
+// Configurar o MinIO
+builder.Services.AddSingleton<IMinioService, MinioService>();
+builder.Services.Configure<MinioSettings>(builder.Configuration.GetSection("MinIOConnection"));
 
 var app = builder.Build();
 

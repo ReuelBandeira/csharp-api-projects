@@ -2,9 +2,8 @@ using Api.Domain.UseCases.FilesMinios.Repositories.Interfaces;
 using Api.Domain.UseCases.FilesMinios.Models;
 using Api.Infra.Database;
 using Minio; // Biblioteca MinIO
-using Minio.DataModel; // Para tipos relacionados ao MinIO
 using Microsoft.EntityFrameworkCore;
-using Minio.DataModel.Args; // Para consultas assíncronas no EF
+using System.IO; // Para o tipo Stream
 
 namespace Api.Domain.UseCases.FilesMinios.Repositories;
 
@@ -72,7 +71,7 @@ public class FileMinioRepository : IFileMinioRepository
     {
         try
         {
-            return await _minioClient.BucketExistsAsync(new BucketExistsArgs().WithBucket(bucketName));
+            return await _minioClient.BucketExistsAsync(bucketName);
         }
         catch (Exception ex)
         {
@@ -93,15 +92,9 @@ public class FileMinioRepository : IFileMinioRepository
                 await CreateBucketAsync(bucketName);
             }
 
-            var putObjectArgs = new PutObjectArgs()
-                .WithBucket(bucketName)
-                .WithObject(fileName)
-                .WithContentType(fileType)
-                .WithStreamData(stream)
-                .WithObjectSize((long)fileSize);
-
+            // Usando o método direto de upload de arquivo
             Console.WriteLine($"Iniciando upload do arquivo: {fileName}");
-            await _minioClient.PutObjectAsync(putObjectArgs);
+            await _minioClient.PutObjectAsync(bucketName, fileName, stream, (long)fileSize, fileType);
             Console.WriteLine($"Upload do arquivo {fileName} concluído com sucesso.");
         }
         catch (Exception ex)
@@ -112,33 +105,13 @@ public class FileMinioRepository : IFileMinioRepository
     }
 
 
-
-    // public async Task UploadFileAsync(string bucketName, string fileName, string fileType, ulong fileSize, Stream stream)
-    // {
-    //     try
-    //     {
-    //         var putObjectArgs = new PutObjectArgs()
-    //             .WithBucket(bucketName)
-    //             .WithObject(fileName)
-    //             .WithContentType(fileType)
-    //             .WithStreamData(stream)
-    //             .WithObjectSize((long)fileSize);
-
-    //         await _minioClient.PutObjectAsync(putObjectArgs);
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         throw new Exception("Error uploading file.", ex);
-    //     }
-    // }
-
     public async Task CreateBucketAsync(string bucketName)
     {
         try
         {
             if (!await BucketExistsAsync(bucketName))
             {
-                await _minioClient.MakeBucketAsync(new MakeBucketArgs().WithBucket(bucketName));
+                await _minioClient.MakeBucketAsync(bucketName);
             }
         }
         catch (Exception ex)
