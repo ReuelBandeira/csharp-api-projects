@@ -42,38 +42,6 @@ namespace Api.Infra.Database.Migrations
                     b.HasKey("busId");
 
                     b.ToTable("business_unit");
-
-                    b.HasData(
-                        new
-                        {
-                            busId = 1,
-                            busName = "Manaus",
-                            createdAt = new DateTime(2024, 12, 17, 19, 6, 58, 133, DateTimeKind.Utc).AddTicks(5196)
-                        },
-                        new
-                        {
-                            busId = 2,
-                            busName = "Brasília",
-                            createdAt = new DateTime(2024, 12, 17, 19, 6, 58, 133, DateTimeKind.Utc).AddTicks(5198)
-                        },
-                        new
-                        {
-                            busId = 3,
-                            busName = "Rio de Janeiro",
-                            createdAt = new DateTime(2024, 12, 17, 19, 6, 58, 133, DateTimeKind.Utc).AddTicks(5199)
-                        },
-                        new
-                        {
-                            busId = 4,
-                            busName = "São Paulo",
-                            createdAt = new DateTime(2024, 12, 17, 19, 6, 58, 133, DateTimeKind.Utc).AddTicks(5200)
-                        },
-                        new
-                        {
-                            busId = 5,
-                            busName = "Fortaleza",
-                            createdAt = new DateTime(2024, 12, 17, 19, 6, 58, 133, DateTimeKind.Utc).AddTicks(5201)
-                        });
                 });
 
             modelBuilder.Entity("Api.Domain.UseCases.EquipmentFamilys.Models.EquipmentFamily", b =>
@@ -104,6 +72,44 @@ namespace Api.Infra.Database.Migrations
                     b.HasKey("eqFamId");
 
                     b.ToTable("equipment_family");
+                });
+
+            modelBuilder.Entity("Api.Domain.UseCases.FilesMinios.Models.FileMinio", b =>
+                {
+                    b.Property<int>("FilMinId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("BucketName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)");
+
+                    b.Property<ulong>("FileSize")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<string>("FileType")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("varchar(120)");
+
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("deletedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("updatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("FilMinId");
+
+                    b.ToTable("file_minio");
                 });
 
             modelBuilder.Entity("Api.Domain.UseCases.TypesChecklists.Models.TypesChecklist", b =>

@@ -16,6 +16,15 @@ using Api.Domain.UseCases.TypesChecklists.Repositories;
 using Api.Domain.UseCases.TypesChecklists.Repositories.Interfaces;
 using Api.Infra.Database;
 using Api.Shared.Helpers;
+using Minio;
+using Api.Domain.UseCases.FilesMinios.Repositories.Interfaces;
+using Api.Domain.UseCases.FilesMinios.Repositories;
+using Api.Domain.UseCases.FilesMinios.Services.Interfaces;
+using Api.Domain.UseCases.FilesMinios.Services;
+
+
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,8 +48,40 @@ builder.Services.AddScoped<ITypesEquipmentService, TypesEquipmentService>();
 builder.Services.AddScoped<ITypesChecklistRepository, TypesChecklistRepository>();
 builder.Services.AddScoped<ITypesChecklistService, TypesChecklistService>();
 
+builder.Services.AddScoped<IFileMinioRepository, FileMinioRepository>();
+builder.Services.AddScoped<IFileMinioService, FileMinioService>();
+
+builder.Services.AddScoped<IMinioTestService, MinioTestService>();
+
+
+
+
+
+
+
+
+
+
 builder.Services.AddScoped<PaginationParams>();
 builder.Services.AddScoped<PaginationHeaderFilter>();
+
+// Configuração do MinIO
+builder.Services.AddSingleton<MinioClient>(provider =>
+{
+    var endpoint = builder.Configuration["MinIOConnection:Endpoint"];
+    var accessKey = builder.Configuration["MinIOConnection:AccessKey"];
+    var secretKey = builder.Configuration["MinIOConnection:SecretKey"];
+    var useSSL = builder.Configuration.GetValue<bool>("MinIOConnection:UseSSL");
+
+    // Criação do MinioClient com configuração correta
+    var minioClient = new MinioClient()
+        .WithEndpoint(endpoint)
+        .WithCredentials(accessKey, secretKey)
+        .WithSSL(useSSL);
+
+    return (MinioClient)minioClient;
+});
+
 
 builder.Services.AddControllers();
 
@@ -73,6 +114,7 @@ if (app.Environment.IsDevelopment())
     //     .ServiceProvider.GetRequiredService<AppDbContext>()
     //     .Database.Migrate();
 }
+
 
 app.UseHttpsRedirection();
 

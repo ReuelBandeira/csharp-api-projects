@@ -5,6 +5,10 @@ using Api.Domain.UseCases.TypesEquipments.Models;
 using Api.Domain.UseCases.TypesChecklists.Models;
 using Api.Domain.UseCases.EquipmentFamilys.Seeders;
 using Api.Domain.UseCases.TypesCheklists.Seeders;
+using Api.Domain.UseCases.FilesMinios.Models;
+
+
+
 
 namespace Api.Infra.Database;
 
@@ -15,10 +19,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<TypesEquipment> TypeEquipments { get; set; } = null!;
     public DbSet<TypesChecklist> TypeChecklists { get; set; } = null!;
 
+    public DbSet<FileMinio> FileMinios { get; set; } = null!;
+
+
+
+
+
+
+
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        BusinessUnitSeeder.Seed(modelBuilder);
-        EquipmentFamilySeeder.Seed(modelBuilder);
-        TypesChecklistSeeder.Seed(modelBuilder);
+        // BusinessUnitSeeder.Seed(modelBuilder);
+        // EquipmentFamilySeeder.Seed(modelBuilder);
+        // TypesChecklistSeeder.Seed(modelBuilder);
+
     }
 }
